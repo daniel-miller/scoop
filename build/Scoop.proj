@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <OutputPath>$(MSBuildProjectDirectory)\Releases\$(MSBuildProjectName)</OutputPath>
+  </PropertyGroup>
+
+  <Target Name="BuildApp">
+    <MSBuild Projects="..\source\web\Scoop\Scoop.csproj" Properties="Configuration=Release;OutDir=$(OutputPath)\bin\;WebProjectOutputDir=$(OutputPath)" Targets="Build;_CopyWebApplication" />
+  </Target>
+
+</Project>
