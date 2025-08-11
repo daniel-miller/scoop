@@ -3,7 +3,7 @@ $NowUtc         = $Now.ToUniversalTime()
 
 $MajorNumber    = 1  # increment for incompatible API changes or breaking changes
 $MinorNumber    = 0  # increment for new functionality that is backward-compatible
-$PatchNumber    = 0  # increment for backward-compatible hotfixes
+$PatchNumber    = 1  # increment for backward-compatible hotfixes
 
 $PackageVersion = "$MajorNumber.$MinorNumber.$PatchNumber"
 $PackageName    = "Scoop"
