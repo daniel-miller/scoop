@@ -94,14 +94,17 @@ CREATE TABLE scoop.ScoLearner (
 
 CREATE TABLE scoop.ScoPackage (
     OrganizationSlug   VARCHAR(50)     NOT NULL,
-    PackageSlug        VARCHAR(50)     NOT NULL,
+    PackageSlug        VARCHAR(300)    NOT NULL,
     PackageNumber      INT IDENTITY    NOT NULL PRIMARY KEY,
-    PackageTitle       VARCHAR(200)    NOT NULL,
+    PackageTitle       VARCHAR(300)    NOT NULL,
     PackageDescription VARCHAR(MAX),
     ScormVersion       VARCHAR(10)     NOT NULL,
     PackageUploaded    DATETIMEOFFSET  NOT NULL,
     PackageUploadedBy  VARCHAR(200)    NOT NULL,
     PackageIsActive    BIT DEFAULT (1) NOT NULL,
+    PackageSizeInKB    INT DEFAULT (0) NOT NULL,
+    PackageDeleted     DATETIMEOFFSET  NOT NULL,
+    PackageDeletedBy   VARCHAR(200)    NOT NULL,
     CONSTRAINT UQ_ScoPackage_Key UNIQUE (OrganizationSlug, PackageSlug)
 );
 

@@ -90,16 +90,27 @@
                             <div class="feature-card">
                                 <div class="text-muted pb-2" style="font-size: 0.8rem"><%# Eval("PackageSlug") %></div>
                                 <h4 class="mb-3"><%# Eval("Title") %></h4>
-                                <p class="text-muted"><%# Eval("Description") %></p>
+                                <p class="text-muted">
+                                    <%# Eval("Description") %>
+                                    
+                                </p>
                                 <div class="course-actions">
+
+                                    <div class="text-muted float-end pt-3" style="font-size: 0.8rem; text-wrap: nowrap;">
+                                        <%# Eval("PackageSize") %>
+                                    </div>
+
                                     <asp:HyperLink ID="btnLaunch" runat="server" Text="Launch"
                                         CssClass="btn btn-success"><i class="fas fa-rocket me-2"></i>Launch</asp:HyperLink>
+                                    
                                     <asp:HyperLink ID="btnReport" runat="server" Text="Report"
                                         CssClass="btn btn-light"><i class="fas fa-magnifying-glass me-2"></i>Report</asp:HyperLink>
+                                    
                                     <asp:LinkButton ID="btnDelete" runat="server" Text="Delete"
                                         CommandArgument='<%# Eval("PackageSlug") %>'
                                         OnClick="btnDelete_Click" CssClass="btn btn-danger"
                                         OnClientClick="return confirm('Are you sure you want to delete this package?');"><i class="fas fa-trash"></i></asp:LinkButton>
+                                    
                                 </div>
 
                             </div>

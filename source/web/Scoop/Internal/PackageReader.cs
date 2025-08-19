@@ -30,11 +30,12 @@ WHERE p.OrganizationSlug = @OrganizationSlug AND p.PackageSlug = @PackageSlug";
                         {
                             return new CourseInfo
                             {
-                                OrganizationSlug = reader["OrganizationSlug"].ToString(),
-                                PackageSlug = reader["PackageSlug"].ToString(),
-                                PackageNumber = Convert.ToInt32(reader["PackageNumber"].ToString()),
-                                Title = reader["PackageTitle"].ToString(),
                                 Description = reader["PackageDescription"].ToString(),
+                                OrganizationSlug = reader["OrganizationSlug"].ToString(),
+                                PackageNumber = Convert.ToInt32(reader["PackageNumber"].ToString()),
+                                PackageSizeInKB = (int)reader["PackageSizeInKB"],
+                                PackageSlug = reader["PackageSlug"].ToString(),
+                                Title = reader["PackageTitle"].ToString(),
                                 Version = reader["ScormVersion"].ToString()
                             };
                         }
@@ -67,11 +68,12 @@ WHERE p.PackageNumber = @PackageNumber";
                         {
                             return new CourseInfo
                             {
-                                OrganizationSlug = reader["OrganizationSlug"].ToString(),
-                                PackageSlug = reader["PackageSlug"].ToString(),
-                                PackageNumber = Convert.ToInt32(reader["PackageNumber"].ToString()),
-                                Title = reader["PackageTitle"].ToString(),
                                 Description = reader["PackageDescription"].ToString(),
+                                OrganizationSlug = reader["OrganizationSlug"].ToString(),
+                                PackageNumber = Convert.ToInt32(reader["PackageNumber"].ToString()),
+                                PackageSizeInKB = (int)reader["PackageSizeInKB"],
+                                PackageSlug = reader["PackageSlug"].ToString(),
+                                Title = reader["PackageTitle"].ToString(),
                                 Version = reader["ScormVersion"].ToString()
                             };
                         }
@@ -95,6 +97,7 @@ WHERE p.PackageNumber = @PackageNumber";
                 var sql = @"
 SELECT
     p.OrganizationSlug,
+    p.PackageSizeInKB,
     p.PackageSlug,
     p.PackageNumber,
     p.PackageTitle,
@@ -130,8 +133,9 @@ WHERE p.OrganizationSlug = @OrganizationSlug AND p.PackageIsActive = 1";
                             courses.Add(new CourseInfo
                             {
                                 OrganizationSlug = reader["OrganizationSlug"].ToString(),
-                                PackageSlug = reader["PackageSlug"].ToString(),
                                 PackageNumber = Convert.ToInt32(reader["PackageNumber"].ToString()),
+                                PackageSizeInKB = Convert.ToInt32(reader["PackageSizeInKB"].ToString()),
+                                PackageSlug = reader["PackageSlug"].ToString(),
                                 Title = reader["PackageTitle"].ToString(),
                                 Description = reader["PackageDescription"].ToString(),
                                 Version = reader["ScormVersion"].ToString(),

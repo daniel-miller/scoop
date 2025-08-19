@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Web;
 
 namespace Scoop
@@ -20,7 +20,7 @@ namespace Scoop
         {
             ConnectionString = ConfigurationManager.AppSettings["Scoop:ConnectionString"];
             CookieName = ConfigurationManager.AppSettings["Scoop:CookieName"];
-            CookieSecret = ConvertFromBase64(ConfigurationManager.AppSettings["Scoop:CookieSecret"]);
+            CookieSecret = ConfigurationManager.AppSettings["Scoop:CookieSecret"];
             IsCookieEncrypted = ConfigurationManager.AppSettings["Scoop:CookieEncryption"] == "Enabled";
             PackageFolder = ConfigurationManager.AppSettings["Scoop:PackageFolder"];
             LoginUrl = ConfigurationManager.AppSettings["Scoop:LoginUrl"];
@@ -64,14 +64,16 @@ namespace Scoop
 
             switch (organizationSlug)
             {
-                case "keyera":
-                    return "Keyera";
+                case "insite":
+                    return "InSite";
 
                 case "wolfmidstream":
                     return "Wolf Midstream";
             }
 
-            return organizationSlug;
+            var textInfo = new CultureInfo("en-US", false).TextInfo;
+
+            return textInfo.ToTitleCase(organizationSlug);
         }
 
         public static string GetOrganizationSlug(HttpContext context)
@@ -85,13 +87,6 @@ namespace Scoop
         {
             var items = Whitelist.Split(new[] { ',' });
             return items.Contains(ipAddress);
-        }
-
-        private static string ConvertFromBase64(string base64)
-        {
-            byte[] bytes = Convert.FromBase64String(base64);
-
-            return Encoding.UTF8.GetString(bytes);
         }
     }
 }

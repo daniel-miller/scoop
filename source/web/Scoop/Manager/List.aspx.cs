@@ -99,6 +99,7 @@ namespace Scoop
 
                     courseInfo.OrganizationSlug = AppSettings.OrganizationSlug;
                     courseInfo.PackageSlug = package;
+                    courseInfo.PackageSizeInKB = BytesToKilobytes(fileUpload.PostedFile.ContentLength);
 
                     // Save to database
                     SavePackageInfo(courseInfo);
@@ -114,6 +115,12 @@ namespace Scoop
                     lblUploadStatus.ForeColor = System.Drawing.Color.Red;
                 }
             }
+        }
+
+        private int BytesToKilobytes(long bytes)
+        {
+            double kilobytes = bytes / 1000.0;
+            return (int)Math.Round(kilobytes, 0);
         }
 
         private CourseInfo ParseManifest(string packagePath)
@@ -169,7 +176,7 @@ namespace Scoop
 
             var writer = new PackageWriter();
 
-            writer.Delete(organization, package);
+            writer.Delete(organization, package, CurrentManagerEmail);
 
             // Delete files
 

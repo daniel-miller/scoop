@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Globalization;
 using System.Security.Principal;
 
 namespace Scoop
@@ -7,93 +7,118 @@ namespace Scoop
     [Serializable]
     public class CookieToken : IPrincipal, IIdentity
     {
-        #region Constants
+        private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
 
-        private const int EventDurationMinutes = 15;
+        private static TimeSpan Lifetime = TimeSpan.Zero;
 
-        private const int DefaultLifetime = 60; // minutes
+        private static readonly DateTimeStyles Styles = DateTimeStyles.None;
 
-        private static TimeSpan _lifetime = TimeSpan.Zero;
+        private const int DefaultLifetimeInMinutes = 60;
 
-        public static TimeSpan Lifetime()
+        private const int EventDurationInMinutes = 15;
+
+        private DateTimeOffset _created;
+
+        private DateTimeOffset _modified;
+
+        public string AuthenticationSource { get; set; }
+
+        public string Created
         {
-            if (_lifetime == TimeSpan.Zero)
-                _lifetime = TimeSpan.FromMinutes(DefaultLifetime);
-
-            return _lifetime;
+            get => ConvertDateToString(_created);
+            set => _created = ConvertStringToDate(value);
         }
 
-        public string CurrentOrganization { get; set; }
         public string CurrentBrowser { get; set; }
+
         public string CurrentBrowserVersion { get; set; }
 
-        #endregion
+        public string CurrentOrganization { get; set; }
 
-        #region Properties (data)
-
-        public string Session { get; set; }
-
-        public Guid? OrganizationIdentifier { get; set; }
-        public string OrganizationCode { get; set; }
-
-        public Guid? UserIdentifier { get; set; }
-        public string UserEmail { get; set; }
-
-        public bool IsAdministrator { get; set; }
-        public bool IsDeveloper { get; set; }
-        public bool IsOperator { get; set; }
-
-        public Guid[] UserRoles { get; set; }
+        public Guid ID { get; set; }
 
         public string ImpersonatorOrganization { get; set; }
 
         public string ImpersonatorUser { get; set; }
 
+        public bool IsAdministrator { get; set; }
+
+        public bool IsAuthenticated => UserIdentifier.HasValue && UserIdentifier != Guid.Empty;
+
+        public bool IsDeveloper { get; set; }
+
+        public bool IsOperator { get; set; }
+
         public string Language { get; set; }
+
+        public string Modified
+        {
+            get => ConvertDateToString(_modified);
+            set => _modified = ConvertStringToDate(value);
+        }
+
+        public string OrganizationCode { get; set; }
+
+        public Guid? OrganizationIdentifier { get; set; }
+
+        public string Session { get; set; }
 
         public string TimeZoneId { get; set; }
 
-        public DateTime Created { get; set; }
+        public string UserEmail { get; set; }
 
-        public DateTime Modified { get; set; }
+        public Guid? UserIdentifier { get; set; }
 
-        public Guid ID { get; set; }
+        public Guid[] UserRoles { get; set; }
 
         public string ValidationKey { get; set; }
 
-        public string AuthenticationSource { get; set; }
+        public string Environment { get; set; }
 
-        #endregion
+        public CookieToken()
+        {
+            ID = Guid.NewGuid();
 
-        public bool IsActive() => !IsExpired() && Modified.AddMinutes(EventDurationMinutes) > DateTime.UtcNow;
+            Created = DateTimeOffset.UtcNow.ToString("O");
 
-        public bool IsExpired() => Modified.Add(Lifetime()) <= DateTime.UtcNow;
+            Lifetime = TimeSpan.FromMinutes(DefaultLifetimeInMinutes);
 
+            Modified = Created;
+        }
 
+        public bool IsActive()
+            => !IsExpired() && _modified.AddMinutes(EventDurationInMinutes) > DateTimeOffset.UtcNow;
+
+        public bool IsExpired()
+            => _modified.Add(Lifetime) <= DateTimeOffset.UtcNow;
+
+        public DateTimeOffset ParseCreated()
+            => _created;
+
+        private string ConvertDateToString(DateTimeOffset iso)
+            => iso.ToString("O");
+
+        private DateTimeOffset ConvertStringToDate(string iso)
+        {
+            if (DateTimeOffset.TryParseExact(iso, "O", Culture, Styles, out DateTimeOffset parsed))
+                return parsed;
+
+            throw new FormatException($"Invalid ISO 8601 date format: '{iso}'. Expected format: 'O'.");
+        }
+
+        #region IIdentity and IPrincipal
 
         public IIdentity Identity => this;
 
         public string Name => UserEmail;
 
-        public string AuthenticationType => AuthenticationSource;
-
-        public bool IsAuthenticated => UserEmail != null;
+        public string AuthenticationType => "CookieAuth";
 
         public bool IsInRole(string role)
         {
-            if (UserRoles != null && Guid.TryParse(role, out Guid id))
-                return UserRoles.Contains(id);
-
-            return false;
+            throw new NotImplementedException();
         }
 
-
-
-        public CookieToken()
-        {
-            ID = Guid.NewGuid();
-            Created = DateTime.UtcNow;
-            Modified = Created;
-        }
+        #endregion
     }
 }

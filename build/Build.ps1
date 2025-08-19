@@ -3,7 +3,7 @@ $NowUtc         = $Now.ToUniversalTime()
 
 $MajorNumber    = 1  # increment for incompatible API changes or breaking changes
 $MinorNumber    = 0  # increment for new functionality that is backward-compatible
-$PatchNumber    = 1  # increment for backward-compatible hotfixes
+$PatchNumber    = 3  # increment for backward-compatible hotfixes
 
 $PackageVersion = "$MajorNumber.$MinorNumber.$PatchNumber"
 $PackageName    = "Scoop"
@@ -26,8 +26,8 @@ Write-Host "`nStep 1: Starting build for $PackageName version $PackageVersion`n"
 
 Write-Host "`nBuild Stage 2: Uploading packages to Octopus...`n" -ForegroundColor Green
 
-  $OctoServer = Get-Content -Path d:\temp\secret\miller-octo-url.txt -TotalCount 1
-  $OctoKey    = Get-Content -Path d:\temp\secret\miller-octo-key.txt -TotalCount 1
+  $OctoServer = Get-Content -Path d:\work\secrets\miller-octo-url.txt -TotalCount 1
+  $OctoKey    = Get-Content -Path d:\work\secrets\miller-octo-key.txt -TotalCount 1
 
   Octo push --server=$OctoServer --apiKey=$OctoKey --replace-existing --package=$ReleasePath
  

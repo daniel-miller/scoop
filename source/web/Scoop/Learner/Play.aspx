@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head runat="server">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Responsive iFrame with Floating Div</title>
@@ -37,7 +37,6 @@
         .floating-status {
             position: fixed;
             top: 5px;
-            left: 5px;
             background-color: rgba(0, 0, 0, 0.6);
             color: white;
             padding: 5px;
@@ -63,9 +62,13 @@
             height: auto;
         }
 
+        .floating-status #content { color: antiquewhite; }
+
+        .floating-status .status-title { color: white; }
+
         .floating-status button { padding: 2px 5px 2px 5px; font-weight: bold; }
 
-        .floating-status #sessionTime { padding: 0 5px 0 5px; color: antiquewhite; }
+        .floating-status #sessionTime { padding: 0 5px 0 5px; color: white; }
 
         .toggle-btn {
             cursor: pointer;
@@ -100,7 +103,7 @@
             <div id="floatingStatus" class="floating-status expanded">
                 <span class="toggle-btn" id="toggleBtn">◀</span>
                 <div class="content" id="content">
-                    <asp:Label ID="lblCourseTitle" runat="server" Text="SCORM Course"></asp:Label>
+                    <asp:Label ID="lblCourseTitle" runat="server" Text="SCORM Course" CssClass="status-title"></asp:Label>
                     (<span id="statusIndicator" class="status-indicator"></span><span id="lessonStatus"></span>)
                     <span id="sessionTime">00:00:00</span>
                     <button type="button" onclick="exitCourse()">Exit</button>
@@ -125,6 +128,8 @@
 
     <script>
 
+        var exitUrl = '<%= ExitUrl %>';
+        
         var manifestPath = '<%= hdnManifestPath.Value %>';
 
         var organizationSlug = '<%= hdnOrganizationSlug.Value %>';
@@ -158,7 +163,7 @@
             if (window.API) {
                 window.API.LMSFinish('');
             }
-            window.location.href = appRoot + organizationSlug;
+            window.top.location.href = exitUrl;
         }
         
         var startTime = new Date();

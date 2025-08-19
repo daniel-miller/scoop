@@ -7,6 +7,8 @@ namespace Scoop
 {
     public partial class PackagePlay : LearnerPage
     {
+        protected string ExitUrl { get; set; }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (IsPostBack)
@@ -20,6 +22,23 @@ namespace Scoop
             {
                 Response.Redirect(Navigator.ListPath);
             }
+
+            // Float the navigation bar to the right, if requested
+
+            var navigation = Request.QueryString["n"];
+
+            if (Page.Header != null)
+            {
+                var position = navigation == "right"
+                    ? "right"
+                    : "left";
+
+                var style = new System.Web.UI.HtmlControls.HtmlGenericControl();
+                style.InnerHtml = $"<style>.floating-status {{ {position}: 5px !important; }}</style>";
+                Page.Header.Controls.Add(style);
+            }
+
+            SetExitUrl(organization);
 
             // Store in hidden fields for JavaScript access
 
@@ -38,6 +57,15 @@ namespace Scoop
             var number = reader.RetrievePackage(organization, package).PackageNumber;
 
             hdnPackageNumber.Value = number.ToString();
+        }
+
+        protected void SetExitUrl(string organizationSlug)
+        {
+            var exitUrl = Request.QueryString["exitUrl"];
+
+            ExitUrl = exitUrl != null
+                ? DecodeBase64(exitUrl)
+                : ResolveUrl($"~/{organizationSlug}");
         }
 
         private void LoadCourseInfo(string packageRoot, string organizationSlug, string packageSlug)
@@ -85,6 +113,12 @@ namespace Scoop
                 // Log error
                 System.Diagnostics.Debug.WriteLine($"Error loading course info: {ex.Message}");
             }
+        }
+
+        private static string DecodeBase64(string encoded)
+        {
+            var encodedBytes = Convert.FromBase64String(encoded);
+            return System.Text.Encoding.UTF8.GetString(encodedBytes);
         }
     }
 }
